@@ -1,8 +1,13 @@
 var express = require('express')
 var path = require('path')
+var mongoose = require('mongoose')
+var _ = require('underscore')
+var Movie = require('./models/movie')
 var bodyParser = require('body-parser');
 var port = process.env.PORT || 3000
 var app = express()
+
+mongoose.connect('mongodb://localhost/imooc')
 
 app.set('views','./views/pages')
 app.set('view engine','jade')
@@ -14,106 +19,43 @@ console.log('movies start on port '+ port)
 
 //index
 app.get('/',function(req,res){
-	res.render('index',{
-		title:'首页',
-		movies:[{
-			title:'机械战警',
-			_id:1,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:2,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:3,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:4,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:5,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		}]
+	Movie.fetch(function(err,movies){
+		if(err){
+			console.log(err)
+		}
+		res.render('index',{
+			title:'首页',
+			movies: movies
+		})
+
 	})
 })
 
 //detail
 app.get('/movie/:id',function(req,res){
-	res.render('detail',{
-		title:'detail',
-		movie:{
-			doctor:'James Camery',
-			country:'America',
-			title:'机械战警',
-			year:2014,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
-			language:'英语',
-			flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-			summary:'翻牌子快快快快递劫匪会计师考虑的风景深刻理解的疯狂就算了可减肥开始减肥手机打开了附件是开放接口设计建设路口附近时快捷方式决定立即发送来的接发两款手机发两款手机的开发建设路口的附近'
+	var id = req.params.id
 
-		}
+	Movie.findById(id,function(err,movie){
+			res.render('detail',{
+				title:''+movie.title,
+				movie: movie
+			})
 	})
 })
 
 //list
 app.get('/admin/list',function(req,res){
-	res.render('list',{
-		title:'list',
-		movies:[{
-			title:'机械战警',
-			_id:1,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
-			doctor:'James Camery',
-			country:'America',
-			year:2014,
-			language:'英语',
-			flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-			summary:'翻牌子快快快快递劫匪会计师考虑的风景深刻理解的疯狂就算了可减肥开始减肥手机打开了附件是开放接口设计建设路口附近时快捷方式决定立即发送来的接发两款手机发两款手机的开发建设路口的附近'
-		},{
-			title:'机械战警',
-			_id:2,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
-			doctor:'James Camery',
-			country:'America',
-			year:2014,
-			language:'英语',
-			flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-			summary:'翻牌子快快快快递劫匪会计师考虑的风景深刻理解的疯狂就算了可减肥开始减肥手机打开了附件是开放接口设计建设路口附近时快捷方式决定立即发送来的接发两款手机发两款手机的开发建设路口的附近'
-		},{
-			title:'机械战警',
-			_id:3,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
-			doctor:'James Camery',
-			country:'America',
-			year:2014,
-			language:'英语',
-			flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-			summary:'翻牌子快快快快递劫匪会计师考虑的风景深刻理解的疯狂就算了可减肥开始减肥手机打开了附件是开放接口设计建设路口附近时快捷方式决定立即发送来的接发两款手机发两款手机的开发建设路口的附近'
-		},{
-			title:'机械战警',
-			_id:4,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
-			doctor:'James Camery',
-			country:'America',
-			year:2014,
-			language:'英语',
-			flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-			summary:'翻牌子快快快快递劫匪会计师考虑的风景深刻理解的疯狂就算了可减肥开始减肥手机打开了附件是开放接口设计建设路口附近时快捷方式决定立即发送来的接发两款手机发两款手机的开发建设路口的附近'
-		},{
-			title:'机械战警',
-			_id:5,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
-			doctor:'James Camery',
-			country:'America',
-			year:2014,
-			language:'英语',
-			flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-			summary:'翻牌子快快快快递劫匪会计师考虑的风景深刻理解的疯狂就算了可减肥开始减肥手机打开了附件是开放接口设计建设路口附近时快捷方式决定立即发送来的接发两款手机发两款手机的开发建设路口的附近'
-		}]
+	Movie.fetch(function(err,movies){
+		if(err){
+			console.log(err)
+		}
+		res.render('list',{
+			title:'list',
+			movies: movies
+		})
+
 	})
+
 })
 
 app.get('/admin/movie',function(req,res){
@@ -131,3 +73,58 @@ app.get('/admin/movie',function(req,res){
 		}
 	})
 })
+
+//admin update movie
+app.get('./admin/update/:id',function(req,res){
+	var id = req.params.id
+	if(id){
+		Movie.findById(id,function(err,movie) {
+			res.render('admin',{
+				title:'后台更新',
+				movie:movie
+			})
+		})
+	}
+})
+
+//admin post moive
+app.post('/admin/movie/new',function(req,res){
+	var id = req.body.movie._id
+	var movieObj = req.body.movie
+	var _movie
+
+	if(id!=='undefined'){
+		Movie.findById(id,function(err,movie){
+			if(err){
+				console.log(err)
+			}
+			_movie = _.extend(movie,movieObj)
+			_movie.save(function(err,movie){
+				if(err){
+					console.log(err)
+				}
+				res.redirect('./movie/'+movie._id)
+			})
+		})
+	}else{
+		_movie = new Movie({
+			doctor:movieObj.doctor,
+			title:movieObj.title,
+			country:movieObj.country,
+			language:movieObj.language,
+			year:movieObj.year,
+			poster:movieObj.poster,
+			summary:movieObj.summary,
+			flash:movieObj.flash,
+		})
+		_movie.save(function(err,movie){
+				if(err){
+					console.log(err)
+				}
+				res.redirect('./movie/'+movie._id)
+			})
+	}
+})
+
+
+
