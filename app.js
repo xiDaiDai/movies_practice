@@ -12,7 +12,7 @@ mongoose.connect('mongodb://localhost/imooc')
 app.set('views','./views/pages')
 app.set('view engine','jade')
 app.use(express.static(path.join(__dirname,'bower_components')))
-app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.urlencoded({extended:true}))
 app.listen(port)
 
 console.log('movies start on port '+ port)
@@ -75,7 +75,7 @@ app.get('/admin/movie',function(req,res){
 })
 
 //admin update movie
-app.get('./admin/update/:id',function(req,res){
+app.get('/admin/update/:id',function(req,res){
 	var id = req.params.id
 	if(id){
 		Movie.findById(id,function(err,movie) {
@@ -93,20 +93,24 @@ app.post('/admin/movie/new',function(req,res){
 	var movieObj = req.body.movie
 	var _movie
 
-	if(id!=='undefined'){
+	console.log(req.body.movie);
+
+	if(id!='undefined'){
+		console.log('undefined===if=');
 		Movie.findById(id,function(err,movie){
 			if(err){
 				console.log(err)
 			}
 			_movie = _.extend(movie,movieObj)
-			_movie.save(function(err,movie){
+			_movie.save(function(err,_movie){
 				if(err){
 					console.log(err)
 				}
-				res.redirect('./movie/'+movie._id)
+				res.redirect('/movie/'+movie._id)
 			})
 		})
 	}else{
+		console.log('undefined===else=');
 		_movie = new Movie({
 			doctor:movieObj.doctor,
 			title:movieObj.title,
@@ -121,7 +125,7 @@ app.post('/admin/movie/new',function(req,res){
 				if(err){
 					console.log(err)
 				}
-				res.redirect('./movie/'+movie._id)
+				res.redirect('/movie/'+movie._id)
 			})
 	}
 })
